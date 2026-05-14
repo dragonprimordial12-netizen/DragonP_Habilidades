@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💥 Bestias — Habilidades | Dragón Primordial</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fire:#ff4500;--ember:#ff8c00;--gold:#ffd700;
+  --dark:#04030a;--deep:#0a0814;--mid:#12101e;
+  --blue:#4488ff;--teal:#00d4aa;--purple:#b060ff;
+  --corrupt:#ff2255;--pure:#44bbff;
+  --card:rgba(12,10,22,0.92);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--dark);
+  color:#ddd8f0;
+  font-family:'Cinzel',serif;
+  overflow-x:hidden;
+  cursor:crosshair;
+}
+
+/* NOISE + GRID */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='80' height='80' fill='none'/%3E%3Cpath d='M0 40h80M40 0v80' stroke='rgba(100,80,255,0.03)' stroke-width='1'/%3E%3C/svg%3E") repeat;
+  pointer-events:none;z-index:0;
+}
+
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:1;
+  min-height:70vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:5rem 2rem 4rem;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(68,136,255,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 50% 0%, rgba(176,96,255,0.1) 0%, transparent 60%);
+}
+.hero-eyebrow{
+  font-size:0.65rem;letter-spacing:0.5em;text-transform:uppercase;
+  color:rgba(100,160,255,0.6);margin-bottom:1.2rem;
+  animation:fadeDown 1s ease both;
+}
+.hero h1{
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(2rem,7vw,5.5rem);font-weight:900;
+  background:linear-gradient(150deg,#ffffff 0%,#aad4ff 30%,#4488ff 60%,#b060ff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 40px rgba(68,136,255,0.4));
+  animation:blazeIn 1.2s cubic-bezier(.2,.8,.3,1) both;
+  line-height:1.1;
+}
+.hero-sub{
+  margin-top:1.2rem;font-family:'IM Fell English',serif;
+  font-style:italic;font-size:1.1rem;color:rgba(200,210,255,0.5);
+  animation:fadeUp 1.4s ease both 0.4s;
+}
+.hero-tag{
+  display:inline-block;margin-top:1.8rem;
+  font-size:0.62rem;letter-spacing:0.3em;text-transform:uppercase;
+  padding:0.4rem 1.2rem;border:1px solid rgba(68,136,255,0.25);
+  color:rgba(100,160,255,0.6);
+  animation:fadeUp 1.4s ease both 0.6s;
+}
+
+/* ── SIDEBAR + LAYOUT ── */
+.page-layout{
+  display:grid;grid-template-columns:260px 1fr;
+  gap:0;max-width:1300px;margin:0 auto;
+  padding:0 1.5rem 4rem;position:relative;z-index:1;
+}
+@media(max-width:860px){.page-layout{grid-template-columns:1fr;}}
+
+/* SIDEBAR */
+.sidebar{
+  position:sticky;top:1rem;height:fit-content;
+  padding:1.5rem 1rem 2rem;border-right:1px solid rgba(68,136,255,0.08);
+}
+.sidebar-title{
+  font-size:0.58rem;letter-spacing:0.35em;text-transform:uppercase;
+  color:rgba(100,160,255,0.4);margin-bottom:1.2rem;
+}
+.group-label{
+  font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;
+  padding:0.7rem 0 0.4rem;color:rgba(200,210,255,0.35);
+  border-top:1px solid rgba(100,80,255,0.08);margin-top:0.5rem;
+}
+.group-label:first-child{border-top:none;margin-top:0;}
+.nav-item{
+  display:flex;align-items:center;gap:0.6rem;
+  padding:0.45rem 0.6rem;font-size:0.72rem;letter-spacing:0.05em;
+  color:rgba(200,210,255,0.45);cursor:pointer;transition:all 0.2s;
+  border-left:2px solid transparent;margin-bottom:0.1rem;
+}
+.nav-item:hover{color:rgba(200,210,255,0.9);border-left-color:rgba(68,136,255,0.4);background:rgba(68,136,255,0.05);}
+.nav-item.active{color:var(--blue);border-left-color:var(--blue);background:rgba(68,136,255,0.08);}
+.nav-item.locked{color:rgba(200,210,255,0.2);cursor:default;}
+.nav-item.locked:hover{color:rgba(200,210,255,0.2);border-left-color:transparent;background:none;}
+.badge-soon{
+  margin-left:auto;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:0.15rem 0.4rem;border:1px solid rgba(255,140,0,0.2);color:rgba(255,140,0,0.4);
+}
+
+/* CONTENT */
+.content{padding:2rem 0 2rem 2.5rem;}
+@media(max-width:860px){.content{padding:2rem 0;}}
+
+/* SECTION HEADER */
+.section-header{margin-bottom:2.5rem;}
+.section-eyebrow{
+  font-size:0.6rem;letter-spacing:0.35em;text-transform:uppercase;
+  color:rgba(100,160,255,0.5);margin-bottom:0.6rem;
+}
+.section-title{
+  font-family:'Cinzel Decorative',serif;
+  font-size:clamp(1.4rem,3.5vw,2.5rem);color:#fff;
+  line-height:1.15;margin-bottom:0.8rem;
+}
+.section-desc{
+  font-family:'IM Fell English',serif;font-style:italic;
+  font-size:1rem;color:rgba(200,210,255,0.45);max-width:600px;
+  line-height:1.7;
+}
+
+/* DIVIDER */
+.divider{
+  height:1px;background:linear-gradient(90deg,transparent,rgba(68,136,255,0.3),transparent);
+  margin:3rem 0;
+}
+
+/* ── BEAST PANEL (unlocked) ── */
+.beast-panel{
+  background:var(--card);
+  border:1px solid rgba(68,136,255,0.15);
+  margin-bottom:2rem;
+  overflow:hidden;
+}
+.beast-banner{
+  display:flex;align-items:center;gap:1.5rem;
+  padding:1.8rem 2rem;
+  background:linear-gradient(135deg,rgba(20,16,40,0.8),rgba(10,8,20,0.9));
+  border-bottom:1px solid rgba(68,136,255,0.1);
+}
+.beast-emoji-big{font-size:3.5rem;line-height:1;}
+.beast-banner-info{flex:1;}
+.beast-banner-name{
+  font-family:'Cinzel Decorative',serif;font-size:1.3rem;color:#fff;
+  margin-bottom:0.3rem;
+}
+.beast-banner-sub{
+  font-family:'IM Fell English',serif;font-style:italic;
+  font-size:0.9rem;color:rgba(200,210,255,0.45);
+}
+.beast-type-badge{
+  font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;
+  padding:0.3rem 0.9rem;border:1px solid;
+}
+.badge-origen{border-color:rgba(255,215,0,0.3);color:rgba(255,215,0,0.6);}
+.badge-pura{border-color:rgba(68,188,255,0.3);color:rgba(68,188,255,0.6);}
+.badge-corrupta{border-color:rgba(255,34,85,0.3);color:rgba(255,34,85,0.6);}
+
+/* DAY/NIGHT TOGGLE */
+.dn-toggle{
+  display:flex;gap:0;margin:1.5rem 2rem 0;width:fit-content;
+}
+.dn-btn{
+  font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.2em;
+  text-transform:uppercase;padding:0.5rem 1.2rem;background:transparent;
+  border:1px solid rgba(100,80,255,0.2);color:rgba(200,210,255,0.35);
+  cursor:pointer;transition:all 0.25s;
+}
+.dn-btn.active-day{background:rgba(255,215,0,0.08);border-color:rgba(255,215,0,0.4);color:#ffd700;}
+.dn-btn.active-night{background:rgba(68,136,255,0.1);border-color:rgba(68,136,255,0.5);color:var(--blue);}
+
+/* ABILITY GRID */
+.abilities-wrap{padding:1.5rem 2rem 2rem;}
+.abilities-subtitle{
+  font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;
+  color:rgba(100,160,255,0.35);margin-bottom:1.2rem;
+  display:flex;align-items:center;gap:0.8rem;
+}
+.abilities-subtitle::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(68,136,255,0.2),transparent);}
+.abilities-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+
+/* ABILITY CARD */
+.ability-card{
+  background:rgba(6,4,16,0.7);
+  border:1px solid rgba(68,136,255,0.1);
+  padding:1.2rem 1.4rem;
+  transition:border-color 0.25s,box-shadow 0.25s;
+  position:relative;overflow:hidden;
+}
+.ability-card:hover{border-color:rgba(68,136,255,0.35);box-shadow:0 4px 24px rgba(40,80,200,0.15);}
+.ability-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--key-color,rgba(68,136,255,0.5)),transparent);
+}
+.ability-key{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;
+  background:rgba(20,16,40,0.8);border:1px solid rgba(68,136,255,0.25);
+  font-family:'Cinzel Decorative',serif;font-size:0.85rem;color:var(--blue);
+  margin-bottom:0.8rem;font-weight:700;
+}
+.ability-key.mouse-key{font-size:0.6rem;width:auto;padding:0 0.6rem;letter-spacing:0.05em;}
+.ability-key.passive{border-color:rgba(0,212,170,0.35);color:var(--teal);}
+.ability-key.active-key{border-color:rgba(255,80,0,0.4);color:var(--fire);}
+.ability-name{
+  font-family:'Cinzel',serif;font-size:0.85rem;color:#fff;
+  font-weight:700;margin-bottom:0.3rem;
+}
+.ability-quote{
+  font-family:'IM Fell English',serif;font-style:italic;
+  font-size:0.82rem;color:rgba(200,210,255,0.45);
+  margin-bottom:0.7rem;border-left:2px solid rgba(68,136,255,0.25);
+  padding-left:0.7rem;
+}
+.ability-desc{font-size:0.78rem;color:rgba(200,210,255,0.7);line-height:1.7;letter-spacing:0.02em;}
+.ability-night{
+  margin-top:0.8rem;padding-top:0.8rem;
+  border-top:1px solid rgba(68,136,255,0.1);
+  font-size:0.72rem;color:rgba(100,160,255,0.7);line-height:1.6;
+}
+.night-label{
+  font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--blue);margin-bottom:0.3rem;display:flex;align-items:center;gap:0.4rem;
+}
+.night-label::before{content:'🌙';font-size:0.7rem;}
+
+/* VIDEO TIP */
+.video-tip{
+  margin:1.5rem 2rem;padding:1rem 1.4rem;
+  background:rgba(255,140,0,0.04);
+  border:1px solid rgba(255,140,0,0.12);
+  border-left:3px solid rgba(255,140,0,0.4);
+}
+.tip-label{
+  font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:rgba(255,140,0,0.5);margin-bottom:0.5rem;
+}
+.tip-text{
+  font-family:'IM Fell English',serif;font-style:italic;
+  font-size:0.92rem;color:rgba(232,213,176,0.6);line-height:1.6;
+}
+
+/* ── COMING SOON PANEL ── */
+.soon-panel{
+  background:rgba(8,6,18,0.7);
+  border:1px solid rgba(100,80,255,0.08);
+  margin-bottom:1rem;padding:1.4rem 2rem;
+  display:flex;align-items:center;gap:1.5rem;
+  position:relative;overflow:hidden;
+  transition:border-color 0.25s;
+}
+.soon-panel:hover{border-color:rgba(100,80,255,0.18);}
+.soon-emoji{font-size:2rem;opacity:0.5;filter:grayscale(0.4);}
+.soon-info{flex:1;}
+.soon-name{font-size:0.9rem;color:rgba(200,210,255,0.5);margin-bottom:0.2rem;}
+.soon-msg{
+  font-family:'IM Fell English',serif;font-style:italic;
+  font-size:0.78rem;color:rgba(100,80,255,0.45);
+}
+.soon-badge{
+  font-size:0.5rem;letter-spacing:0.25em;text-transform:uppercase;
+  padding:0.35rem 0.8rem;border:1px solid rgba(100,80,255,0.2);
+  color:rgba(100,80,255,0.4);white-space:nowrap;
+}
+.soon-panel::after{
+  content:'';position:absolute;top:0;right:0;width:120px;height:100%;
+  background:linear-gradient(to left,rgba(100,80,255,0.03),transparent);
+}
+
+/* GROUP SECTION */
+.group-section{margin-bottom:3rem;}
+.group-header{
+  display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;
+}
+.group-header-label{
+  font-family:'Cinzel Decorative',serif;font-size:1rem;
+  padding-bottom:0.3rem;
+}
+.group-header-label.origen{color:rgba(255,215,0,0.7);}
+.group-header-label.pura{color:rgba(68,188,255,0.7);}
+.group-header-label.corrupta{color:rgba(255,60,100,0.7);}
+.group-header::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(100,80,255,0.15),transparent);}
+
+/* UNLOCKED LABEL */
+.unlocked-bar{
+  margin-bottom:1rem;display:flex;align-items:center;gap:0.6rem;
+  font-size:0.58rem;letter-spacing:0.3em;text-transform:uppercase;
+  color:rgba(0,212,170,0.5);
+}
+.unlocked-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal);animation:pulse 2s infinite;}
+
+/* SCROLL INDICATOR */
+.scroll-to-top{
+  position:fixed;bottom:2rem;right:2rem;z-index:100;
+  width:40px;height:40px;border:1px solid rgba(68,136,255,0.25);
+  background:rgba(8,6,18,0.9);color:rgba(100,160,255,0.6);
+  font-size:1rem;cursor:pointer;transition:all 0.25s;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+}
+.scroll-to-top.visible{opacity:1;pointer-events:all;}
+.scroll-to-top:hover{border-color:var(--blue);color:var(--blue);background:rgba(20,16,40,0.95);}
+
+/* ANIMATIONS */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px);}to{opacity:1;transform:none;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+@keyframes blazeIn{from{opacity:0;transform:scale(0.94) translateY(20px);}to{opacity:1;transform:none;}}
+@keyframes pulse{0%,100%{opacity:0.6;}50%{opacity:1;}}
+@keyframes scanline{0%{transform:translateY(-100%);}100%{transform:translateY(200vh);}}
+
+/* SCANLINE EFFECT */
+.hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(68,136,255,0.012) 2px,rgba(68,136,255,0.012) 4px);
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">Dragón Primordial · Anime RPG</p>
+  <h1>💥 BESTIAS<br>DISPONIBLES</h1>
+  <p class="hero-sub">Guía completa de habilidades — Por bestia, por tecla, por modo</p>
+  <span class="hero-tag">💠 Día &amp; Noche · Todo cambia de noche</span>
+</section>
+
+<div class="page-layout">
+
+  <!-- SIDEBAR NAV -->
+  <nav class="sidebar">
+    <p class="sidebar-title">Índice de Bestias</p>
+
+    <p class="group-label">⚖️ Origen</p>
+    <div class="nav-item locked" onclick="scrollTo('origen')">💠👤 Bestia Humano <span class="badge-soon">Pronto</span></div>
+
+    <p class="group-label">👑 Puras</p>
+    <div class="nav-item locked">💠🦁 Bestia León <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🐲 Bestia Dragón <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🐍 Bestia Serpiente <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🐢 Bestia Tortuga <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🐦‍🔥 Bestia Fénix <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🦊 Bestia Zorro <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🦖 Bestia Rey Lagarto <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🦂 Bestia Escorpión <span class="badge-soon">Pronto</span></div>
+
+    <p class="group-label">🩸 Corruptas</p>
+    <div class="nav-item locked">💠🕷️ Bestia Araña <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🐳 Bestia Ballena <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🦄 Bestia Unicornio <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🧪 Bestia Quimera <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item locked">💠🐺 Bestia Lobo <span class="badge-soon">Pronto</span></div>
+    <div class="nav-item active" onclick="scrollToBeast()">🦏 Bestia Rinoceronte ✓</div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ORIGEN -->
+    <div class="group-section">
+      <div class="group-header">
+        <span class="group-header-label origen">⚖️ Bestia Origen</span>
+      </div>
+      <div class="soon-panel">
+        <span class="soon-emoji">💠👤</span>
+        <div class="soon-info">
+          <div class="soon-name">Bestia Humano</div>
+          <div class="soon-msg">Sus habilidades se revelarán cuando el momento llegue... el origen de todo está en preparación.</div>
+        </div>
+        <span class="soon-badge">📜 En preparación</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- PURAS -->
+    <div class="group-section">
+      <div class="group-header">
+        <span class="group-header-label pura">👑 Bestias Puras</span>
+      </div>
+
+      <div class="soon-panel"><span class="soon-emoji">💠🦁</span><div class="soon-info"><div class="soon-name">Bestia León</div><div class="soon-msg">El rey aguarda en las sombras. Guía en camino...</div></div><span class="soon-badge">🔒 Clasificado</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🐲</span><div class="soon-info"><div class="soon-name">Bestia Dragón</div><div class="soon-msg">El más antiguo. Su poder está siendo documentado...</div></div><span class="soon-badge">🔒 Clasificado</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🐍</span><div class="soon-info"><div class="soon-name">Bestia Serpiente</div><div class="soon-msg">Sigilosa. Sus habilidades se escriben de noche...</div></div><span class="soon-badge">🔒 Clasificado</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🐢</span><div class="soon-info"><div class="soon-name">Bestia Tortuga</div><div class="soon-msg">Paciente. La guía llegará cuando deba llegar...</div></div><span class="soon-badge">🔒 Clasificado</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🐦‍🔥</span><div class="soon-info"><div class="soon-name">Bestia Fénix</div><div class="soon-msg">Renace del fuego. Sus habilidades se revelan pronto...</div></div><span class="soon-badge">🔒 Clasificado</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🦊</span><div class="soon-info"><div class="soon-name">Bestia Zorro</div><div class="soon-msg">Astuto y veloz. En preparación...</div></div><span class="soon-badge">🔒 Clasificado</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🦖</span><div class="soon-info"><div class="soon-name">Bestia Rey Lagarto Tirano</div><div class="soon-msg">El terror prehistórico. Guía pendiente de clasificación...</div></div><span class="soon-badge">🔒 Clasificado</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🦂</span><div class="soon-info"><div class="soon-name">Bestia Escorpión</div><div class="soon-msg">Veneno y precisión. Sus datos están siendo registrados...</div></div><span class="soon-badge">🔒 Clasificado</span></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CORRUPTAS -->
+    <div class="group-section">
+      <div class="group-header">
+        <span class="group-header-label corrupta">🩸 Bestias Corruptas</span>
+      </div>
+      <div class="soon-panel"><span class="soon-emoji">💠🕷️</span><div class="soon-info"><div class="soon-name">Bestia Araña</div><div class="soon-msg">La corrupción teje su red. Guía en preparación...</div></div><span class="soon-badge">⚠️ Corrupta</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🐳</span><div class="soon-info"><div class="soon-name">Bestia Ballena</div><div class="soon-msg">Desde las profundidades oscuras. Pronto emergirá...</div></div><span class="soon-badge">⚠️ Corrupta</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🦄</span><div class="soon-info"><div class="soon-name">Bestia Unicornio</div><div class="soon-msg">La pureza corrompida. Sus habilidades son peligrosas...</div></div><span class="soon-badge">⚠️ Corrupta</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🧪</span><div class="soon-info"><div class="soon-name">Bestia Quimera</div><div class="soon-msg">Múltiples formas, múltiples habilidades. Clasificando...</div></div><span class="soon-badge">⚠️ Corrupta</span></div>
+      <div class="soon-panel"><span class="soon-emoji">💠🐺</span><div class="soon-info"><div class="soon-name">Bestia Lobo</div><div class="soon-msg">Cazadora de manada. Documentación en proceso...</div></div><span class="soon-badge">⚠️ Corrupta</span></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ══ RINOCERONTE UNLOCKED ══ -->
+    <div id="beast-rino">
+      <div class="unlocked-bar">
+        <span class="unlocked-dot"></span>
+        Habilidades desbloqueadas
+      </div>
+
+      <div class="beast-panel">
+        <!-- BANNER -->
+        <div class="beast-banner">
+          <span class="beast-emoji-big">🦏</span>
+          <div class="beast-banner-info">
+            <div class="beast-banner-name">Bestia Rinoceronte</div>
+            <div class="beast-banner-sub">TODAS las Habilidades EXPLICADAS · Anime RPG</div>
+          </div>
+          <span class="beast-type-badge badge-corrupta">🩸 Corrupta</span>
+        </div>
+
+        <!-- VIDEO TIP -->
+        <div class="video-tip">
+          <div class="tip-label">💡 Lo que puedes decir al empezar el video</div>
+          <div class="tip-text">"Hoy les muestro cada habilidad de la Bestia Rinoceronte, una por una. Tiene modo día y modo noche, y de noche TODO cambia."</div>
+        </div>
+
+        <!-- KEYBOARD ABILITIES -->
+        <div class="abilities-wrap">
+          <p class="abilities-subtitle">⌨️ Por habilidad — Teclado</p>
+          <div class="abilities-grid">
+
+            <!-- Q PASIVA -->
+            <div class="ability-card" style="--key-color:rgba(0,212,170,0.5);">
+              <div class="ability-key passive">Q</div>
+              <div class="ability-name">Pasiva — Piel Blindada</div>
+              <div class="ability-quote">"Me golpeas, te arrepientes"</div>
+              <div class="ability-desc">Reduce el daño recibido un 25% de día. Además al recibir 3 golpes seguidos contraataca automáticamente con una onda que aturde y lanza enemigos. Mientras caminas dejas polvo y cada ciertos pasos el suelo tiembla dañando a los cercanos.</div>
+              <div class="ability-night">
+                <div class="night-label">Modo Noche</div>
+                La reducción de daño sube al 45%. Además ralentiza a todos los enemigos que se acerquen demasiado.
+              </div>
+            </div>
+
+            <!-- Z -->
+            <div class="ability-card" style="--key-color:rgba(255,80,0,0.5);">
+              <div class="ability-key">Z</div>
+              <div class="ability-name">Embestida Brutal</div>
+              <div class="ability-quote">"Te lanzo y no te suelto"</div>
+              <div class="ability-desc">Carga a máxima velocidad aplastando todo lo que esté en frente.</div>
+              <div class="ability-night">
+                <div class="night-label">Modo Noche</div>
+                Deja una onda de fuego al impactar.
+              </div>
+            </div>
+
+            <!-- X -->
+            <div class="ability-card" style="--key-color:rgba(255,180,0,0.5);">
+              <div class="ability-key">X</div>
+              <div class="ability-name">Ráfaga de Cuernos</div>
+              <div class="ability-quote">"5 rayos... 7 de noche"</div>
+              <div class="ability-desc">Dispara una lluvia de proyectiles en abanico.</div>
+              <div class="ability-night">
+                <div class="night-label">Modo Noche</div>
+                Atraviesan enemigos y queman con daño continuo.
+              </div>
+            </div>
+
+            <!-- C -->
+            <div class="ability-card" style="--key-color:rgba(68,136,255,0.5);">
+              <div class="ability-key">C</div>
+              <div class="ability-name">Impacto Sísmico</div>
+              <div class="ability-quote">"El suelo tiembla bajo mis pies"</div>
+              <div class="ability-desc">Golpea el suelo creando ondas sísmicas y grietas.</div>
+              <div class="ability-night">
+                <div class="night-label">Modo Noche</div>
+                El suelo queda ardiendo y sigue dañando.
+              </div>
+            </div>
+
+            <!-- V -->
+            <div class="ability-card" style="--key-color:rgba(176,96,255,0.5);">
+              <div class="ability-key">V</div>
+              <div class="ability-name">Esferas Oscuras</div>
+              <div class="ability-quote">"3 de día, 5 de noche, todas duelen"</div>
+              <div class="ability-desc">Lanza esferas oscuras con anillo giratorio.</div>
+              <div class="ability-night">
+                <div class="night-label">Modo Noche</div>
+                Explotan en área al impactar.
+              </div>
+            </div>
+
+            <!-- E ACTIVA -->
+            <div class="ability-card" style="--key-color:rgba(255,34,85,0.6);">
+              <div class="ability-key active-key">E</div>
+              <div class="ability-name">Activa — Estampida Devastadora</div>
+              <div class="ability-quote">"Ni los árboles se salvan"</div>
+              <div class="ability-desc">La habilidad más destructiva del Rinoceronte. Se lanza en carga rompiendo todo lo que encuentre, incluyendo árboles del escenario. Al terminar, el suelo estalla con grietas, pilares de roca y una onda expansiva masiva.</div>
+              <div class="ability-night">
+                <div class="night-label">Modo Noche</div>
+                Deja el suelo ardiendo, aplica sangrado, y ejecuta una segunda carga automática.
+              </div>
+            </div>
+
+            <!-- T TRANSFORMACION -->
+            <div class="ability-card" style="--key-color:rgba(255,215,0,0.5);">
+              <div class="ability-key" style="border-color:rgba(255,215,0,0.4);color:#ffd700;">T</div>
+              <div class="ability-name">Transformación</div>
+              <div class="ability-quote">"Ya no soy el mismo"</div>
+              <div class="ability-desc">Activa el modo bestia: más velocidad, más vida, rocas orbitando que dañan enemigos cercanos. Dura 30 segundos.</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- VIDEO TIP 2 -->
+        <div class="video-tip" style="margin-top:0;">
+          <div class="tip-label">💡 Lo que puedes decir al mostrar Q y E</div>
+          <div class="tip-text">"La Q no es solo defensa, es una trampa. Déjate golpear tres veces y el Rinoceronte responde solo."<br><br>"La E es la habilidad más épica del juego de noche, segunda carga incluida, los árboles literalmente salen volando."</div>
+        </div>
+
+        <!-- MOUSE ABILITIES -->
+        <div class="abilities-wrap" style="padding-top:0.5rem;">
+          <p class="abilities-subtitle">🖱️ Clics con el mouse — Herramienta</p>
+          <div class="abilities-grid">
+
+            <div class="ability-card" style="--key-color:rgba(0,212,170,0.4);">
+              <div class="ability-key mouse-key">Clic corto</div>
+              <div class="ability-name">Erupción de Cuerno</div>
+              <div class="ability-quote">"El suelo explota hacia donde apunto"</div>
+              <div class="ability-desc">Golpea el suelo y lanza una cadena de 6 erupciones de roca en línea hacia el cursor.</div>
+            </div>
+
+            <div class="ability-card" style="--key-color:rgba(255,120,0,0.4);">
+              <div class="ability-key mouse-key">Clic sostenido</div>
+              <div class="ability-name">Embestida Sísmica</div>
+              <div class="ability-quote">"Cuanto más cargo, más duele"</div>
+              <div class="ability-desc">Mantén el clic para cargar fuerza (0→100%). Al soltar te lanzas y arrollas todo, terminando con pilares de tierra y grietas.</div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- end beast-panel -->
+    </div><!-- end beast-rino -->
+
+  </div><!-- end content -->
+</div><!-- end layout -->
+
+<!-- SCROLL TO TOP -->
+<button class="scroll-to-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+window.addEventListener('scroll', () => {
+  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 400);
+});
+
+function scrollToBeast(){
+  document.getElementById('beast-rino').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// Reveal on scroll
+const panels = document.querySelectorAll('.beast-panel, .soon-panel, .ability-card');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){ e.target.style.opacity='1'; e.target.style.transform='none'; }
+  });
+}, {threshold:0.08});
+panels.forEach(p => {
+  p.style.opacity='0';
+  p.style.transform='translateY(14px)';
+  p.style.transition='opacity 0.6s ease, transform 0.6s ease';
+  obs.observe(p);
+});
+</script>
+</body>
+</html>
